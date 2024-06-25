@@ -1,0 +1,116 @@
+import csv
+import tkinter
+from tkinter import messagebox
+import matplotlib.pyplot as plt
+#function to get height and weight from user
+def BMI_cal(weight, height):
+    h = height * height
+    return weight/h
+#function get the category
+def bmi_category(bmi):
+        if bmi < 18.5:
+            return "Underweight"
+        if bmi < 24.9:
+            return "Normal weight"
+        if bmi < 29.9:
+            return "Overweight"
+        return "Obesity"
+#to ask userdetails
+category_chart=[]
+def user_details():
+    name = nameentry.get()
+    age =   agespinbox.get()
+    weight = weightentry.get()
+    height = heightentry.get()
+    if not name or not age or not weight or not height:
+        messagebox.showwarning("Input Error", "Please fill in all fields")
+        return None
+    try:
+        age = int(age)
+        weight = float(weight)
+        height = float(height)
+    except ValueError:
+        messagebox.showwarning("Input Error", "Please enter valid numerical values for age, weight, and height")
+        return None
+    bmi=BMI_cal(weight,height)
+    category=bmi_category(bmi)
+
+    return name,age,weight,height,bmi,category
+#function to write the data and save it to csv file
+def write_csv_file(Bmdata):
+    global category_chart
+    data=user_details()
+    print(data)
+    new_category=category_chart.append(data[-1])
+    print(category_chart)
+    #fieldname=["Name","AGE","WEIGHT","BMI","CATEGORY"]
+    with open("bmidata.csv","a") as bmicsv:
+        #creating a writer object
+        writer=csv.writer(bmicsv)
+        #write header
+       # writer.writerow(fieldname)
+        #write data
+        writer.writerow(data)
+def save_data():
+    user_data = user_details()
+    if user_data:
+        write_csv_file(user_data)
+        messagebox.showinfo("Data Saved", "Your data has been saved successfully!")
+        clear_entries()
+def clear_entries():
+    nameentry.delete(0, tkinter.END)
+    agespinbox.delete(0, tkinter.END)
+    weightentry.delete(0, tkinter.END)
+    heightentry.delete(0, tkinter.END)
+
+def show_graph():
+    names=[]
+    bmi_cat=[]
+    with open('samplecsv.csv','r') as file_obj:
+        reader_obj = csv.reader(file_obj)
+        for row in reader_obj:
+            print(row)
+# Create the main window
+window = tkinter.Tk()
+window.title("BMI CALCULATION FORM ")
+frame = tkinter.Frame(window)
+#labels for window
+bmicalframe= tkinter.LabelFrame(window, text="USERINFO_TO_CAL_BMI")
+bmicalframe.grid(row=0, column=0)
+namelabel = tkinter.Label(bmicalframe, text=" Name")
+namelabel.grid(row=0, column=0)
+#Entry fro name
+nameentry = tkinter.Entry(bmicalframe)
+nameentry.grid(row=0, column=1)
+#label and entry for height
+heightlabel = tkinter.Label(bmicalframe, text="Height(M)")
+heightlabel.grid(row=2, column=0)
+#entry for height
+heightentry= tkinter.Entry(bmicalframe)
+heightentry.grid(row=2, column=1)
+#label for weightyes
+weightlabel = tkinter.Label(bmicalframe, text="Weight(KG)")
+weightlabel.grid(row=3, column=0)
+#Entry for weight
+weightentry = tkinter.Entry(bmicalframe)
+weightentry.grid(row=3, column=1)
+ #lable for age
+agelabel=tkinter.Label(bmicalframe,text="Age")
+agespinbox=tkinter.Spinbox(bmicalframe,from_=1,to=100)
+agelabel.grid(row=1,column=0)
+agespinbox.grid(row=1,column=1)
+#save button
+savebtn = tkinter.Button(bmicalframe, text='Save', command=save_data)
+savebtn.grid(row=4, column=0, columnspan=2, pady=10)
+#continue button
+continu_btn=tkinter.Button(bmicalframe,text="Continue",command=clear_entries)
+continu_btn.grid(row=4, column=2, columnspan=1, pady=10)
+#calculate
+cal=tkinter.Button(bmicalframe, text='Calculate', command=BMI_cal)
+cal.grid(row=5, column=0, columnspan=2, pady=10)
+#show Graph
+Show_graph=tkinter.Button(bmicalframe, text='Show_Graph', command=BMI_cal)
+cal.grid(row=5, column=0, columnspan=2, pady=10)
+
+#mainloop()
+window.mainloop()
