@@ -19,7 +19,7 @@ def bmi_category(bmi):
 category_chart=[]
 def user_details():
     name = nameentry.get()
-    age =   agespinbox.get()
+    age =  agespinbox.get()
     weight = weightentry.get()
     height = heightentry.get()
     if not name or not age or not weight or not height:
@@ -27,21 +27,20 @@ def user_details():
         return None
     try:
         age = int(age)
-        weight = float(weight)
+        weight = float(weight)#
         height = float(height)
     except ValueError:
         messagebox.showwarning("Input Error", "Please enter valid numerical values for age, weight, and height")
         return None
     bmi=BMI_cal(weight,height)
     category=bmi_category(bmi)
-
     return name,age,weight,height,bmi,category
 #function to write the data and save it to csv file
 def write_csv_file(Bmdata):
-    global category_chart
+    #global category_chart
     data=user_details()
     print(data)
-    new_category=category_chart.append(data[-1])
+    #new_category=category_chart.append(data[-1])
     print(category_chart)
     #fieldname=["Name","AGE","WEIGHT","BMI","CATEGORY"]
     with open("bmidata.csv","a") as bmicsv:
@@ -62,14 +61,33 @@ def clear_entries():
     agespinbox.delete(0, tkinter.END)
     weightentry.delete(0, tkinter.END)
     heightentry.delete(0, tkinter.END)
-
-def show_graph():
-    names=[]
+#Function is used to create show graph
+def get_list_of_category():
     bmi_cat=[]
-    with open('samplecsv.csv','r') as file_obj:
-        reader_obj = csv.reader(file_obj)
-        for row in reader_obj:
-            print(row)
+    with open("bmidata.csv",'r') as rdcsv:
+       readlines= rdcsv.readlines()
+       for line in readlines:
+           newline=line.split(",")
+           category_bmi=newline[-1]
+           bmi_cat.append(category_bmi.strip())
+    return bmi_cat
+def show_graph_pie():
+    listcount=[]
+    listcat=[]
+    bmi_cat_list=get_list_of_category()
+    dict_bmi_cat = {"Underweight": 0, "Normal weight": 0, "Overweight": 0, "Obesity": 0}
+    for item in bmi_cat_list:
+        if item in dict_bmi_cat:
+            dict_bmi_cat[item] += 1
+        count=dict_bmi_cat
+    for cat,cnt in count.items():
+        listcount.append(cnt)
+        listcat.append(cat)
+    f, a = plt.subplots()
+    a.pie(listcount,labels=listcat)
+    plt.title("BMI CATEGORY!!!")
+    plt.show()
+
 # Create the main window
 window = tkinter.Tk()
 window.title("BMI CALCULATION FORM ")
@@ -90,27 +108,28 @@ heightentry= tkinter.Entry(bmicalframe)
 heightentry.grid(row=2, column=1)
 #label for weightyes
 weightlabel = tkinter.Label(bmicalframe, text="Weight(KG)")
-weightlabel.grid(row=3, column=0)
+weightlabel.grid(row=3, column=0, pady=10)
 #Entry for weight
 weightentry = tkinter.Entry(bmicalframe)
-weightentry.grid(row=3, column=1)
+weightentry.grid(row=3, column=1,pady=10)
  #lable for age
 agelabel=tkinter.Label(bmicalframe,text="Age")
 agespinbox=tkinter.Spinbox(bmicalframe,from_=1,to=100)
 agelabel.grid(row=1,column=0)
 agespinbox.grid(row=1,column=1)
 #save button
+#row=4, column=0, columnspan=2, padx=10, pady=10)
 savebtn = tkinter.Button(bmicalframe, text='Save', command=save_data)
-savebtn.grid(row=4, column=0, columnspan=2, pady=10)
+savebtn.grid(row=4, column=0, columnspan=2,padx=10, pady=10)
 #continue button
 continu_btn=tkinter.Button(bmicalframe,text="Continue",command=clear_entries)
-continu_btn.grid(row=4, column=2, columnspan=1, pady=10)
+continu_btn.grid(row=4, column=2, columnspan=1, padx=10,pady=10)
 #calculate
 cal=tkinter.Button(bmicalframe, text='Calculate', command=BMI_cal)
-cal.grid(row=5, column=0, columnspan=2, pady=10)
+cal.grid(row=5, column=0, columnspan=2,padx=10, pady=10)
 #show Graph
-Show_graph=tkinter.Button(bmicalframe, text='Show_Graph', command=BMI_cal)
-cal.grid(row=5, column=0, columnspan=2, pady=10)
+show_graph=tkinter.Button(bmicalframe, text='Show_Graph', command=show_graph_pie)
+show_graph.grid(row=6, column=1, columnspan=2,padx=10, pady=10)
 
 #mainloop()
 window.mainloop()
