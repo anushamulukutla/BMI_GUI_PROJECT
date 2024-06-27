@@ -1,4 +1,4 @@
-# BMI Calculation Form
+# BMI Calculation Project
 
 This project is a BMI  calculation form built using Python's Tkinter for the GUI and Matplotlib for the graphical representation of BMI categories.
 The application collects user details, calculates BMI, categorizes it, and displays a pie chart showing the distribution of BMI categories.
