@@ -2,6 +2,9 @@ import csv
 import tkinter
 from tkinter import messagebox
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+
 #function to get height and weight from user
 def BMI_cal(weight, height):
     h = height * height
@@ -72,21 +75,25 @@ def get_list_of_category():
            bmi_cat.append(category_bmi.strip())
     return bmi_cat
 def show_graph_pie():
-    listcount=[]
-    listcat=[]
-    bmi_cat_list=get_list_of_category()
+    listcount = []
+    listcat = []
+    bmi_cat_list = get_list_of_category()
     dict_bmi_cat = {"Underweight": 0, "Normal weight": 0, "Overweight": 0, "Obesity": 0}
     for item in bmi_cat_list:
         if item in dict_bmi_cat:
             dict_bmi_cat[item] += 1
-        count=dict_bmi_cat
-    for cat,cnt in count.items():
+    for cat, cnt in dict_bmi_cat.items():
         listcount.append(cnt)
         listcat.append(cat)
-    f, a = plt.subplots()
-    a.pie(listcount,labels=listcat)
-    plt.title("BMI CATEGORY!!!")
-    plt.show()
+#to display the code in the same GUI Window
+    figure = Figure(figsize=(6, 6), dpi=100)
+    ax = figure.add_subplot(111)
+    ax.pie(listcount, labels=listcat, autopct='%1.1f%%')
+    ax.set_title("BMI CATEGORY!!!")
+
+    canvas = FigureCanvasTkAgg(figure, master=graph_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack()
 
 # Create the main window
 window = tkinter.Tk()
